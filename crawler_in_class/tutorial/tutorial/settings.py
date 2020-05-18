@@ -14,6 +14,24 @@ BOT_NAME = 'tutorial'
 SPIDER_MODULES = ['tutorial.spiders']
 NEWSPIDER_MODULE = 'tutorial.spiders'
 
+#MYSQL_host = '127.0.0.1'
+#MYSQL_user = 'prabha'
+#MYSQL_pwd = 'prabha123'
+#MYSQL_db = 'web_scraping'
+
+ITEM_PIPELINES = { #000 to 1000
+   'tutorial.pipelines.MysqlPipeline': 000,
+    #'tutorial.pipelines.CoreymsPipeline' : 600,
+}
+
+#     config = {
+#         'user': 'kavitha',
+#         'password': 'root123',
+#         'host': '127.0.0.1',
+#         'database': 'web_scraping',
+#         'raise_on_warnings': True
+#     }
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
