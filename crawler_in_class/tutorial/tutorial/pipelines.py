@@ -4,6 +4,114 @@ import scrapy
 from mysql.connector import errorcode
 import datetime
 
+class TechcrunchPipeline():
+
+    collection_name = 'scrapy_items'
+    config = {
+        'user': 'prabha',
+        'password': 'prabha123',
+        'host': '127.0.0.1',
+        'database': 'web_scraping',
+        'raise_on_warnings': True
+    }
+    add_post = ("INSERT INTO web_scraping.techcrunch"
+                 "(title, pubDate, link) "
+                 "VALUES (%s, %s, %s)")
+
+    def __init__(self):
+        print(self.config.items())
+
+    def open_spider(self, spider):
+        try:
+            self.cnx = mysql.connector.connect(**self.config)
+            self.cursor = self.cnx.cursor()
+        except  mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+
+    # def close_spider(self, spider):
+    #     self.cnx.close()
+
+    def process_item(self, item, spider):
+        try:
+
+            self.cursor.execute(self.add_post, (item['title'].encode('utf-8'),
+                                                #item['authors'].encode('utf-8'),
+                                                item['pubDate'].encode('utf-8'),
+                                                item['link'].encode('utf-8'),
+                                                ))
+            self.cnx.commit()
+            print("\ninserted--->", item)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+
+        return item
+
+    def get_time_now(self):
+        now = datetime.datetime.utcnow()  # now()
+        today_now = now.strftime("%Y-%m-%d %H:%M:%S")
+        return today_now
+
+
+class CoreymsPipeline():
+
+    collection_name = 'scrapy_items'
+    config = {
+        'user': 'prabha',
+        'password': 'prabha123',
+        'host': '127.0.0.1',
+        'database': 'web_scraping',
+        'raise_on_warnings': True
+    }
+    add_post = ("INSERT INTO web_scraping.coreyms"
+                 "(summary, link) "
+                 "VALUES (%s, %s)")
+
+    def __init__(self):
+        print(self.config.items())
+
+    def open_spider(self, spider):
+        try:
+            self.cnx = mysql.connector.connect(**self.config)
+            self.cursor = self.cnx.cursor()
+        except  mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+
+    # def close_spider(self, spider):
+    #     self.cnx.close()
+
+    def process_item(self, item, spider):
+        try:
+
+            self.cursor.execute(self.add_post, (item['summary'].encode('utf-8'),
+                                                 item['link'].encode('utf-8'),
+                                                ))
+            self.cnx.commit()
+            print("\ninserted--->", item)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+
+        return item
+
 
 class MysqlPipeline():
 

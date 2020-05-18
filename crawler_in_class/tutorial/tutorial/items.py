@@ -20,6 +20,7 @@ class QuotesItem(scrapy.Item):
 
 class TechCrunchItem(scrapy.Item):
     title = scrapy.Field()
+  #  authors = scrapy.Field()
     pubDate = scrapy.Field()
     link = scrapy.Field()
 

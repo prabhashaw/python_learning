@@ -20,8 +20,9 @@ NEWSPIDER_MODULE = 'tutorial.spiders'
 #MYSQL_db = 'web_scraping'
 
 ITEM_PIPELINES = { #000 to 1000
-   'tutorial.pipelines.MysqlPipeline': 000,
-    #'tutorial.pipelines.CoreymsPipeline' : 600,
+   #'tutorial.pipelines.MysqlPipeline': 000,
+   #'tutorial.pipelines.CoreymsPipeline': 600,
+   'tutorial.pipelines.TechcrunchPipeline': 600,
 }
 
 #     config = {
