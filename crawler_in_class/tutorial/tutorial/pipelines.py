@@ -4,27 +4,56 @@ import scrapy
 from mysql.connector import errorcode
 import datetime
 
+
 class MysqlPipeline():
-    cnx = mysql.connector.connect(user='prabha', password='prabha123',
-                                  host='127.0.0.1',
-                                  database='web_scraping')
-    print("connection good")
-    cursor = cnx.cursor()
-    add_quote = ("INSERT INTO web_scraping.quotes"
+
+    collection_name = 'scrapy_items'
+    config = {
+        'user': 'prabha',
+        'password': 'prabha123',
+        'host': '127.0.0.1',
+        'database': 'web_scraping',
+        'raise_on_warnings': True
+    }
+
+    add_quote = ("INSERT INTO web_scraping.quotes2"
                  "(quote, author, tags, last_upd_timestamp) "
                  "VALUES (%s, %s, %s, %s)")
 
     def __init__(self):
-        print(self.cursor.items())
+        # print("\n\n********************* CONFIG IS *****************")
+        # print("MYSQL_host: " , MYSQL_host)
+        # self.config = {'user':MYSQL_user , 'password': MYSQL_pwd, 'host': MYSQL_host, 'database': MYSQL_db,
+        #                'raise_on_warnings': True}
+        print(self.config.items())
+
+
+    def open_spider(self, spider):
+        try:
+            self.cnx = mysql.connector.connect(**self.config)
+            self.cursor = self.cnx.cursor()
+        except  mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+
+    # def close_spider(self, spider):
+    #     self.cnx.close()
 
     def process_item(self, item, spider):
-
+        # print("************text**********", item['text'])
+        # print("************author**********", item['author'])
+        # print("************tags**********", item['tags'])
         tags = self.list_to_string(item['tags'])
         try:
             self.cursor.execute(self.add_quote, (item['text'].encode('utf-8'),
                                                  item['author'].encode('utf-8'),
                                                  tags.encode('utf-8'),
                                                  self.get_time_now()))
+
             self.cnx.commit()
             print("\ninserted--->", item)
         except mysql.connector.Error as err:
@@ -34,6 +63,7 @@ class MysqlPipeline():
                 print("Database does not exist")
             else:
                 print(err)
+
         return item
 
     def list_to_string(self, s):
